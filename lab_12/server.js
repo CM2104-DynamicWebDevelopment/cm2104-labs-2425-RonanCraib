@@ -24,11 +24,28 @@ spotifyApi.clientCredentialsGrant().then(
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-// Function to search for tracks
+// Function to search for tracks and return HTML response
 async function getTracks(searchterm, res) {
     spotifyApi.searchTracks(searchterm)
         .then(function (data) {
-            res.send(JSON.stringify(data.body));
+            var tracks = data.body.tracks.items;
+            var HTMLResponse = "<h1>Search Results for '" + searchterm + "'</h1>";
+
+            // Iterate over the tracks and build the HTML response
+            for (var i = 0; i < tracks.length; i++) {
+                var track = tracks[i];
+                HTMLResponse += `
+                    <div style="margin-bottom: 20px;">
+                        <h2>${track.name}</h2>
+                        <h4>${track.artists[0].name}</h4>
+                        <img src="${track.album.images[0].url}" style="max-width: 200px;">
+                        <br>
+                        <a href="${track.external_urls.spotify}" target="_blank">Track Details</a>
+                    </div>
+                `;
+            }
+
+            res.send(HTMLResponse);
         })
         .catch(function (err) {
             console.error(err);
