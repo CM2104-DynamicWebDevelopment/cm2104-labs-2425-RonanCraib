@@ -57,4 +57,11 @@ app.use(express.urlencoded({extended:true}))
     });
    });
   
+   app.post('/delete', function(req, res) {
+    db.collection('quotes').deleteOne(req.body, function(err, result) {
+   if (err) throw err;
+      res.redirect('/');
+    });
+   });
+  
   
