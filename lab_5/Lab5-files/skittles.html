@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Jedi</title>
+    </head>
+    <body>
+        <p id="skittles">Skittles</p>
+        <p>Fear</p>
+        <p>Anger</p>
+
+        <script>
+            let paragraphs = document.getElementsByTagName("p");
+            
+            // Move "Anger" before "Skittles"
+            document.body.insertBefore(paragraphs[2], paragraphs[0]);  
+            
+            console.log(paragraphs.length);  // Logs the number of paragraph elements
+
+            let test = "cat";
+            for(let i = 0; i < paragraphs.length; i++) {
+                console.log(i);
+                let header = i + 1;
+                paragraphs[i].innerHTML = "<h" + header + ">paragraph " + test + "</h" + header + ">";  // Adds headers to paragraphs
+            }
+
+            // Create a new <p> element and append a text node inside it
+            let newPara = document.createElement("p");  // Creates a new <p> element
+            let text = document.createTextNode("A jedi craves not these things");  // Creates a new text node
+            newPara.appendChild(text);  // Appends the text node to the <p> element
+            document.body.appendChild(newPara);  // Appends the <p> element to the body
+        </script>
+    </body>
+</html>
