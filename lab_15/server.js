@@ -94,6 +94,25 @@ app.get('/profile', function(req, res) {
   });
 });
 
+// Route to render update user form
+app.get('/updateuser', function(req, res) {
+  if (!req.session.loggedin) { res.redirect('/login'); return; }
+
+  var uname = req.session.username; // Get the logged-in username
+
+  db.collection('people').findOne({ "login.username": uname }, function(err, result) {
+    if (err) throw err;
+
+    if (!result) {
+      res.redirect('/'); // Redirect if user not found
+      return;
+    }
+
+    // Render the update form with current user details
+    res.render('pages/update', { user: result });
+  });
+});
+
 // Add User page
 app.get('/adduser', function(req, res) {
   if (!req.session.loggedin) { res.redirect('/login'); return; }
@@ -134,6 +153,41 @@ app.post('/dologin', function(req, res) {
     } else {
       res.redirect('/login');
     }
+  });
+});
+
+// Route to handle the update form submission
+app.post('/doupdate', function(req, res) {
+  if (!req.session.loggedin) { res.redirect('/login'); return; }
+
+  var uname = req.body.username; // The username cannot be changed
+
+  var updatedData = {
+    "name": {
+      "title": req.body.title,
+      "first": req.body.first,
+      "last": req.body.last
+    },
+    "location": {
+      "street": req.body.street,
+      "city": req.body.city,
+      "state": req.body.state,
+      "postcode": req.body.postcode
+    },
+    "email": req.body.email,
+    "login": {
+      "username": uname, // Ensure the username remains the same
+      "password": req.body.password // Update password if changed
+    },
+    "dob": req.body.dob,
+    "nat": req.body.nat
+  };
+
+  db.collection('people').updateOne({ "login.username": uname }, { $set: updatedData }, function(err, result) {
+    if (err) throw err;
+    
+    console.log("User updated successfully.");
+    res.redirect('/profile?username=' + uname); // Redirect to profile after update
   });
 });
 
